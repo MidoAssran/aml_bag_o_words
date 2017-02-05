@@ -4,8 +4,10 @@ Visualizer.py
 :description: Evaluates lexical metrics on sanitized redit conversation data
 :author: Mido Assran
 :date: Feb. 4, 2017
+:note: Function names prepended with 'h_' are helper functions
 """
 
+from collections import Counter
 import pandas as pd
 from nltk.tokenize import word_tokenize
 
@@ -16,70 +18,87 @@ DF_TRAIN_PATH = "train_input_clean.csv"
 DF_TARGET_PATH = "train_output.csv"
 # ---------------------------------------------------------------------------- #
 
-def category_frequencies(dframe, ctgry_set):
+def h_category_counts(dframe, ctgry_set):
     """
-    Determine the number of instances of each category in the dframe
+    <Helper> Determine the number of instances of each category in the dframe
 
     :type dframe: pandas.dframe
     :type ctgry_set: set(str)
     :rtype: dict("category": count)
     """
     ctgry_counts = {}
-    for cat in ctgry_set:
-        ctgry_counts[cat] = dframe[dframe['category'] == cat].count()[0]
+    for ctgry in ctgry_set:
+        ctgry_counts[ctgry] = dframe[dframe['category'] == ctgry].count()[0]
     return ctgry_counts
 
-def word_frequencies_by_category(ctgry_set, wrd_lst_by_ctgry):
+def h_word_counts_by_category(ctgry_set, wrd_lst_by_ctgry):
     """
-    Determine the frequency of words in each category of the dframe
+    <Helper> Determine the number of words in each category of the dframe
 
     :type ctgry_set: set(str)
     :type wrd_lst_by_ctgry: dict("category": list(str))
     :rtype: dict("category": dict("word": count))
     """
     counts = {}
-    for cat in ctgry_set:
-        wrd_lst = wrd_lst_by_ctgry[cat]
-        counts[cat] = {}
-        unique_words = set(wrd_lst)
-        for unq_wrd in unique_words:
-            counts[cat][unq_wrd] = wrd_lst.count(unq_wrd)
+    for ctgry in ctgry_set:
+        wrd_lst = wrd_lst_by_ctgry[ctgry]
+        counts[ctgry] = Counter(wrd_lst)
     return counts
+
+def frequency_metric(ctgry_counts, wrd_counts, top_n=4):
+    """
+    Visualize the frequency of the 'top_n' most common words in each category
+
+    :type top_n: int (=DEFAULT:4)
+    :rtype: void
+    """
+    print("Category frequencies:", ctgry_counts)
+    print("Word Frequencies:")
+    for ctgry in ctgry_counts:
+        print("\t", ctgry, ":", wrd_counts[ctgry].most_common(top_n))
 
 def main():
     """ Calling code for the visualizer """
 
+    # ------------------------------------------ #
+    # Pre-calculations
+    # ------------------------------------------ #
     # Create a single unified data frame with targets
     dframe = pd.read_csv(DF_TRAIN_PATH)
     dframe['category'] = pd.read_csv(DF_TARGET_PATH)['category']
 
-    # Set of categories in dframe
+    # Data structure of the categories in the dframe
     ctgry_set = set(list(dframe['category']))
 
-    # List of words in each category
+    # Data structure of the words in each category in the dframe
     wrd_lst_by_ctgry = {}
+    for ctgry in ctgry_set:
+        ctgry_dframe = dframe[dframe['category'] == ctgry]
+        cnvs = list(ctgry_dframe['conversation'])
+        wrd_lst = []
+        for cnv in cnvs:
+            wrd_lst += word_tokenize(cnv)
+        wrd_lst_by_ctgry[ctgry] = wrd_lst
 
-    id_list = list(dframe['id'])
-    n_samples = len(id_list)
-    for uid in id_list:
-
-        print("{}%".format(round(uid / n_samples * 100)), end='\r')
-
-        ctgry = str(dframe[dframe['id'] == uid]['category'])
-        if ctgry not in wrd_lst_by_ctgry:
-            wrd_lst_by_ctgry[ctgry] = []
-
-        conv = str(dframe[dframe['id'] == uid]['conversation'])
-        wrd_lst_by_ctgry[ctgry] += word_tokenize(conv)
-
-
-    # Distribution of data samples by category
-    ctgry_counts = category_frequencies(dframe, ctgry_set)
+    # Distribution of categories
+    ctgry_counts = h_category_counts(dframe, ctgry_set)
     # Distribution of words by category
-    wrd_counts = word_frequencies_by_category(ctgry_set=ctgry_set,
-                                              wrd_lst_by_ctgry=wrd_lst_by_ctgry)
-    print(ctgry_counts)
-    print(wrd_counts['hockey'])
+    wrd_counts = h_word_counts_by_category(ctgry_set, wrd_lst_by_ctgry)
+    # ------------------------------------------ #
+
+    # Visualize word frequencies in each category
+    frequency_metric(ctgry_counts, wrd_counts, top_n=6)
+
+    # Compute the information gain
+
+
+    # Compute the chi squared metric of each word relative to each category
+
+
 
 if __name__ == "__main__":
     main()
+
+
+
+
