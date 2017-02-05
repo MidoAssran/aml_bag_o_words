@@ -51,7 +51,9 @@ def main():
     for wrd in wrd_count:
         if i % 100 == 0:
             print("{}%".format(round(i / i_max * 100, 3)), end='\r')
-        wrd_dframe = dframe[dframe['conversation'].str.contains(' '+ wrd +' ')]
+        wrd_dframe = dframe[
+            dframe['conversation'].str.contains(r'\b' + wrd + r'\b')
+        ]
         ctgrys = list(wrd_dframe['category'])
         ctgry_counts_by_wrd[wrd] = Counter(ctgrys)
         i += 1

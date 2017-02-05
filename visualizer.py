@@ -1,14 +1,14 @@
 """
 Visualizer.py
 
-:description: Evaluates lexical metrics on sanitized redit conversation data
+:description: Evaluates and visualizes metrics on sanitized redit conversations
 :author: Mido Assran
 :date: Feb. 4, 2017
 :note: Function names prepended with 'h_' are helper functions
 """
 
-import numpy as np
 from collections import Counter
+import numpy as np
 
 # ---------------------------------------------------------------------------- #
 # Script Parameters
