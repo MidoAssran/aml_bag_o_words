@@ -79,7 +79,7 @@ def visualize_frequency_metric(ctgry_counts, wrd_counts_by_ctgry,
     :type bottom_n: int (=DEFAULT:4)
     :rtype: void
     """
-    print("Category frequencies:", ctgry_counts, end="\n\n")
+    print("Category frequencies:\n\t", ctgry_counts.most_common(10), end="\n\n")
     print("Word Frequencies:")
     for ctgry in ctgry_counts:
         print("\t", ctgry, ":",
@@ -103,7 +103,7 @@ def main():
     # Compute the information gain
 
     # Wrd is an example of the term for which we want to compute chi-squared
-    wrd = "goal"
+    wrd = "bane"
     # Compute the chi squared metric of each word relative to each category
     visualize_chi_squared_metric(wrd_counts_by_ctgry=wrd_counts_by_ctgry,
                                  ctgry_count=ctgry_count,
