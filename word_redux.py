@@ -1,13 +1,14 @@
 """
-Visualizer.py
+Word Redux
 
-:description: Evaluates and visualizes metrics on sanitized redit conversations
+:description: Reduces vocabulary based on data metrics
 :author: Mido Assran
 :date: Feb. 4, 2017
 :note: Function names prepended with 'h_' are helper functions
 """
 
 from collections import Counter
+from itertools import dropwhile
 import numpy as np
 
 # ---------------------------------------------------------------------------- #
@@ -47,7 +48,10 @@ def h_chi_squared_metric(wrd_counts_by_ctgry, ctgry_count, term, category):
             term_wrd = wrd_counts_by_ctgry[ctgry][t]
             D += all_wrd - term_wrd
     # Return the chi_squared_metric between 'term' and 'category'
-    return N * (A * D - C * B) ** 2 / ((A + C) * (B + D) * (A + B) * (C + D))
+    denom = ((A + C) * (B + D) * (A + B) * (C + D))
+    if denom == 0:
+        return 0
+    return N * (A * D - C * B) ** 2 / denom
 
 def visualize_chi_squared_metric(wrd_counts_by_ctgry, ctgry_count, term):
     """
@@ -90,17 +94,32 @@ def visualize_frequency_metric(ctgry_counts, wrd_counts_by_ctgry,
               wrd_counts_by_ctgry[ctgry].most_common()[-bottom_n:])
     print("\n")
 
+def document_frequency_thresholding(thresh, wrd_counts_by_ctgry):
+    """
+    Apply Document Frequency Thresholding to all categories
+
+    :type thresh: int
+    :type wrd_counts_by_ctgry: dict('category': Counter('word': count))
+    :rtype: void
+    """
+    for wrd_count in wrd_counts_by_ctgry.values():
+        for wrd, _ in dropwhile(lambda key_count: key_count[1] >= thresh, wrd_count.most_common()):
+            del wrd_count[wrd]
+
 def main():
-    """ Calling code for the visualizer """
+    """ Calling code for the word redux """
 
     data = np.load(DS_LOAD_PATH)
     ctgry_count = data['ctgry_count'].item()
     # wrd_count = data['wrd_count'].item() # Unused for now
     wrd_counts_by_ctgry = data['wrd_counts_by_ctgry'].item()
 
+    # Apply document frequency thresholding to reduce vocabulary
+    thresh = 15
+    document_frequency_thresholding(thresh, wrd_counts_by_ctgry)
 
     # Visualize word frequencies in each category
-    top_n, bottom_n = 5, 2
+    top_n, bottom_n = 2, 2
     visualize_frequency_metric(ctgry_count, wrd_counts_by_ctgry,
                                top_n=top_n, bottom_n=bottom_n)
 
@@ -112,6 +131,7 @@ def main():
     visualize_chi_squared_metric(wrd_counts_by_ctgry=wrd_counts_by_ctgry,
                                  ctgry_count=ctgry_count,
                                  term=wrd)
+
 
 
 if __name__ == "__main__":
