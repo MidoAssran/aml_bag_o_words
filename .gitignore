@@ -2,3 +2,4 @@ train_input.csv
 train_output.csv
 train_input_clean.csv
 .vscode
+*.npz
