@@ -45,24 +45,10 @@ def main():
     # Set of all words in dframe
     wrd_count = sum(wrd_counts_by_ctgry.values(), Counter())
 
-    # Set of the categories in the dframe organized by words
-    ctgry_counts_by_wrd = {}
-    i, i_max = 0, len(wrd_count)
-    for wrd in wrd_count:
-        if i % 100 == 0:
-            print("{}%".format(round(i / i_max * 100, 3)), end='\r')
-        wrd_dframe = dframe[
-            dframe['conversation'].str.contains(r'\b' + wrd + r'\b')
-        ]
-        ctgrys = list(wrd_dframe['category'])
-        ctgry_counts_by_wrd[wrd] = Counter(ctgrys)
-        i += 1
-
     # Export results to a npz compressed file
     np.savez_compressed(DS_EXPORT_PATH,
                         wrd_count=wrd_count,
                         ctgry_count=ctgry_count,
-                        ctgry_counts_by_wrd=ctgry_counts_by_wrd,
                         wrd_counts_by_ctgry=wrd_counts_by_ctgry)
 
 
