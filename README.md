@@ -8,8 +8,7 @@ The following python packages are required:
 * scikit-learn
 * nltk
 
-In addition, once nltk is installed you must run the following commands (in a python session) to install corpora and models:
-`nltk.download("stopwords")` and `nltk.download("punkt")`
+In addition, once nltk is installed you must run the following commands (in a python session) to install the required corpora and models: `nltk.download("stopwords")` and `nltk.download("punkt")`.
 
 
 ## Data Preparation
