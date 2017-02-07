@@ -73,7 +73,7 @@ def chi_squared_metric(wrd_counts_by_ctgry, term, num_docs, visualize=True):
     if visualize:
         print("Mean Chi Squared Metric (", term, ") :", avg_chi_sqrd)
         print("Max Chi Squared Metric (", term, ") :", max(chi_sqrd))
-    return max(chi_sqrd)
+    return avg_chi_sqrd
 
 def doc_chi_squared_thresholding(thresh, wrd_counts_by_ctgry, num_docs):
     """
@@ -84,8 +84,10 @@ def doc_chi_squared_thresholding(thresh, wrd_counts_by_ctgry, num_docs):
     :type num_docs: int
     :rtype: void
     """
+    i, n = 0, len(wrd_counts_by_ctgry.keys())
     chi_sqrd_by_cat = {}
     for ctgry in wrd_counts_by_ctgry.keys():
+        print(round(i / n * 100), "%", end='\r')
         wrd_count = wrd_counts_by_ctgry[ctgry]
         chi_sqrd_all = [
             chi_squared_metric(wrd_counts_by_ctgry=wrd_counts_by_ctgry,
@@ -143,11 +145,11 @@ def main():
     wrd_counts_by_ctgry = data['wrd_counts_by_ctgry'].item()
 
     # Apply document frequency thresholding to reduce vocabulary
-    thresh = 4000
+    thresh = 5
     doc_frequency_thresholding(thresh, wrd_counts_by_ctgry)
 
     # Apply document frequency thresholding to reduce vocabulary
-    thresh = 10000
+    thresh = 40
     doc_chi_squared_thresholding(thresh, wrd_counts_by_ctgry, num_docs)
 
 
@@ -170,7 +172,7 @@ def main():
          for wrd in wrd_counts_by_ctgry[ctgry]]
     )
 
-    print("Keep word set:", wrd_set)
+    # print("Keep word set:", wrd_set)
 
     # Export keep word set to a npz compressed file
     np.savez_compressed(DS_EXPORT_PATH,
