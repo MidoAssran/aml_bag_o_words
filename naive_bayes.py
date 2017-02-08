@@ -55,7 +55,7 @@ if __name__ == "__main__":
     data_path = "data_structures.npz"
     features_path = "features.npz"
     df_path = "test_input_clean.csv"
-    save_path = "predictions_naive.csv"
+    save_path = df_path.replace("_clean", "_pred_naive")
 
     data = np.load(data_path)
     ctgry_count = data['ctgry_count'].item()
