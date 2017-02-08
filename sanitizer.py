@@ -39,7 +39,7 @@ if __name__ == "__main__":
     df_path = "test_input.csv"
 
     df = pd.read_csv(df_path)
-    sanitize(df)
+    sanitize(df, stem=True)
 
     save_path = df_path.replace(".csv", "_clean.csv")
     df.to_csv(save_path, index=False)

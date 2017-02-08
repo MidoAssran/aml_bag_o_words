@@ -54,14 +54,14 @@ def naive_classify(df, ctgry_probs, wrd_probs_by_ctgry, features):
 if __name__ == "__main__":
     data_path = "data_structures.npz"
     features_path = "features.npz"
-    df_path = "test_input_clean.csv"
+    df_path = "train_input_clean.csv"
     save_path = "predictions_naive.csv"
 
     data = np.load(data_path)
     ctgry_count = data['ctgry_count'].item()
     wrd_counts_by_ctgry = data['wrd_counts_by_ctgry'].item()
     features = np.load(features_path)['keep_wrd_set'].item()
-
+    print(features)
     ctgry_probs, wrd_probs_by_ctgry = \
         naive_probs(ctgry_count, wrd_counts_by_ctgry)
 
