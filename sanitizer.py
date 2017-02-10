@@ -4,7 +4,7 @@ import pandas as pd
 from nltk.tokenize import TweetTokenizer
 from nltk.corpus import stopwords
 from nltk.stem.lancaster import LancasterStemmer
-from nltk.stem import WordNetLemmatizer
+from nltk.stem.wordnet import WordNetLemmatizer
 
 
 def sanitize(df, stem=False, lem=False):
@@ -44,7 +44,7 @@ def sanitize(df, stem=False, lem=False):
 
 
 if __name__ == "__main__":
-    df_path = "train_input1.csv"
+    df_path = "train_input.csv"
 
     df = pd.read_csv(df_path)
     sanitize(df, lem=True)
