@@ -84,7 +84,6 @@ def doc_chi_squared_thresholding(wrd_counts_by_ctgry, num_docs):
     :type num_docs: int
     :rtype: void
     """
-    i, n = 0, len(wrd_counts_by_ctgry.keys())
     chi_sqrd_by_cat = {}
     for ctgry in wrd_counts_by_ctgry.keys():
         wrd_count = wrd_counts_by_ctgry[ctgry]
@@ -99,7 +98,7 @@ def doc_chi_squared_thresholding(wrd_counts_by_ctgry, num_docs):
     all_chi = [chi for ctgry in wrd_counts_by_ctgry.keys() for chi in chi_sqrd_by_cat[ctgry]]
     max_chi = max(all_chi)
     min_chi = min(all_chi)
-    thresh = (max_chi - min_chi) * 0.05 + min_chi
+    thresh = (max_chi - min_chi) * 0.001 + min_chi
     print("Chi Sqrd Thresh:", thresh, max_chi, min_chi)
 
     for ctgry in wrd_counts_by_ctgry.keys():
@@ -156,22 +155,13 @@ def main():
     del ctgry_count
     # wrd_count = data['wrd_count'].item() # Unused for now
     wrd_counts_by_ctgry = data['wrd_counts_by_ctgry'].item()
-    lo_wrd_counts_by_ctgry = data['wrd_counts_by_ctgry'].item()
 
     # Apply document frequency thresholding to reduce vocabulary
-    thresh = 15
-    doc_frequency_thresholding(thresh, lo_wrd_counts_by_ctgry)
-    # Apply document frequency thresholding to reduce vocabulary
-    thresh = 1000
-    doc_frequency_thresholding(thresh, lo_wrd_counts_by_ctgry, cut_lo=False)
-
-    # Apply document frequency thresholding to reduce vocabulary
-    thresh = 1000
+    thresh = 4
     doc_frequency_thresholding(thresh, wrd_counts_by_ctgry)
 
-    # Apply document chi squared thresholding to reduce vocabulary
-    doc_chi_squared_thresholding(wrd_counts_by_ctgry, num_docs)
-
+    # # Apply document chi squared thresholding to reduce vocabulary
+    # doc_chi_squared_thresholding(wrd_counts_by_ctgry, num_docs)
 
     # Visualize word frequencies in each category
     top_n, bottom_n = 3, 3
@@ -181,18 +171,16 @@ def main():
     # Compute the information gain
 
     # Wrd is an example of the term for which we want to compute chi-squared
-    wrd = "like"
+    wrd = "people"
     # Compute the chi squared metric of each word relative to each category
-    chi_squared_metric(wrd_counts_by_ctgry=lo_wrd_counts_by_ctgry,
+    chi_squared_metric(wrd_counts_by_ctgry=wrd_counts_by_ctgry,
                        term=wrd, num_docs=num_docs)
 
+    # Extract keep word set
     wrd_set = set(
         [wrd for ctgry in wrd_counts_by_ctgry.keys()
          for wrd in wrd_counts_by_ctgry[ctgry]]
-    ).union(set(
-        [wrd for ctgry in lo_wrd_counts_by_ctgry.keys()
-         for wrd in lo_wrd_counts_by_ctgry[ctgry]]
-    ))
+    )
 
     print("Keep word set size:", len(wrd_set))
 
