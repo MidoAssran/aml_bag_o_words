@@ -29,7 +29,7 @@ def sanitize(df, stem=False, lem=False):
         sentence = re.sub(r"<.*?>", "", sentence)  # remove html tags
         sentence = re.sub(r"@.*?\s", "", sentence)  # remove @ mentions
         sentence = re.sub(r"[0-9]", "", sentence)  # remove ALL numbers
-        sentence = re.sub(r"[.,?!\-'\"#&*^_|]", "", sentence)  # remove punctuation
+        sentence = re.sub(r"[.,?!\-'\"%$#&*^_|]", "", sentence)  # remove punctuation
 
         sentence = tknzr.tokenize(sentence)
 
