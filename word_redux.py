@@ -157,7 +157,7 @@ def main():
     wrd_counts_by_ctgry = data['wrd_counts_by_ctgry'].item()
 
     # Apply document frequency thresholding to reduce vocabulary
-    thresh = 10
+    thresh = 4
     doc_frequency_thresholding(thresh, wrd_counts_by_ctgry)
 
     # # Apply document chi squared thresholding to reduce vocabulary
